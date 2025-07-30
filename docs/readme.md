@@ -1,0 +1,1 @@
+This is a dump of docs cocreated with AI mainly consulting different services such as Perplexity Pro, and working through the deep eval docs. I often use these reference files to navigate the LLM when starting a project.

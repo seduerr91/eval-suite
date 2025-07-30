@@ -1,0 +1,10 @@
+deepeval
+pydantic
+pydantic-settings
+streamlit
+uv
+python-dotenv
+pandas
+huggingface_hub
+plotly
+python-dotenv
