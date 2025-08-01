@@ -10,8 +10,9 @@ from src.schemas.models import ClinicalNote, EvaluationResult
 
 class TestEvaluation(unittest.TestCase):
 
-    @patch('evaluation.evaluate')
-    def test_run_evaluation_success(self, mock_evaluate):
+    @patch('openai.OpenAI')
+    @patch('src.evaluation.evaluate')
+    def test_run_evaluation_success(self, mock_evaluate, mock_openai):
         # Arrange
         notes = [
             ClinicalNote(
@@ -21,13 +22,38 @@ class TestEvaluation(unittest.TestCase):
             )
         ]
 
+        # Create mock metrics with exact names that match what run_evaluation looks for
+        mock_hallucination = MagicMock()
+        mock_hallucination.name = "Hallucination"
+        mock_hallucination.score = 0.1
+        
+        mock_recall = MagicMock()
+        mock_recall.name = "Contextual Recall"
+        mock_recall.score = 0.9
+        
+        mock_accuracy = MagicMock()
+        mock_accuracy.name = "Clinical Accuracy [GEval]"
+        mock_accuracy.score = 0.8
+        
+        mock_soap = MagicMock()
+        mock_soap.name = "SOAP Structure Compliance [GEval]"
+        mock_soap.score = 1.0
+        
+        mock_safety = MagicMock()
+        mock_safety.name = "Clinical Safety Assessment [GEval]"
+        mock_safety.score = 0.7
+        
+        mock_terminology = MagicMock()
+        mock_terminology.name = "Medical Terminology Accuracy [GEval]"
+        mock_terminology.score = 0.85
+        
         mock_metric_data = [
-            MagicMock(name='Hallucination', score=0.1),
-            MagicMock(name='Contextual Recall', score=0.9),
-            MagicMock(name='Clinical Accuracy [GEval]', score=0.8),
-            MagicMock(name='SOAP Structure Compliance [GEval]', score=1.0),
-            MagicMock(name='Clinical Safety Assessment [GEval]', score=0.7),
-            MagicMock(name='Medical Terminology Accuracy [GEval]', score=0.85)
+            mock_hallucination,
+            mock_recall,
+            mock_accuracy,
+            mock_soap,
+            mock_safety,
+            mock_terminology
         ]
         mock_test_result = MagicMock(metrics_data=mock_metric_data)
         mock_evaluation_output = MagicMock(test_results=[mock_test_result])
@@ -42,8 +68,9 @@ class TestEvaluation(unittest.TestCase):
         self.assertEqual(results[0].hallucination_score, 0.1)
         self.assertAlmostEqual(results[0].overall_score, (0.1 + 0.9 + 0.8 + 1.0 + 0.7 + 0.85) / 6)
 
-    @patch('evaluation.evaluate')
-    def test_run_evaluation_no_results(self, mock_evaluate):
+    @patch('openai.OpenAI')
+    @patch('src.evaluation.evaluate')
+    def test_run_evaluation_no_results(self, mock_evaluate, mock_openai):
         # Arrange
         notes = [ClinicalNote(transcript='t', note='gt', generated_note='g')]
         mock_evaluation_output = MagicMock(test_results=[])
@@ -53,8 +80,9 @@ class TestEvaluation(unittest.TestCase):
         with self.assertRaises(ValueError):
             run_evaluation(notes)
 
-    @patch('evaluation.evaluate')
-    def test_run_evaluation_missing_metrics(self, mock_evaluate):
+    @patch('openai.OpenAI')
+    @patch('src.evaluation.evaluate')
+    def test_run_evaluation_missing_metrics(self, mock_evaluate, mock_openai):
         # Arrange
         notes = [ClinicalNote(transcript='t', note='gt', generated_note='g')]
         mock_test_result = MagicMock(metrics_data=None)
