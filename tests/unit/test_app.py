@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch, mock_open
 import pandas as pd
-import json
 
 from src import app
 
+
 class TestApp(unittest.TestCase):
 
-    @patch('src.app.open', new_callable=mock_open)
+    @patch("src.app.open", new_callable=mock_open)
     def test_load_results_file_not_found(self, mocked_file):
         # Arrange
         mocked_file.side_effect = FileNotFoundError
@@ -19,20 +19,24 @@ class TestApp(unittest.TestCase):
         # Assert
         self.assertIsNone(result)
 
-    @patch('src.app.open')
-    @patch('src.app.json.load')
+    @patch("src.app.open")
+    @patch("src.app.json.load")
     def test_load_results_success(self, mock_json_load, mock_open):
         # Arrange
         mock_data = [
             {
-                "overall_score": 0.8, 
-                "clinical_safety_score": 0.9, 
-                "soap_structure_score": 1, 
-                "clinical_accuracy_score": 0.85, 
-                "medical_terminology_score": 0.95, 
-                "hallucination_score": 0.1, 
-                "missing_info_score": 0.05, 
-                "note": {"transcript": "a", "ground_truth_note": "b", "generated_note": "c"}
+                "overall_score": 0.8,
+                "clinical_safety_score": 0.9,
+                "soap_structure_score": 1,
+                "clinical_accuracy_score": 0.85,
+                "medical_terminology_score": 0.95,
+                "hallucination_score": 0.1,
+                "missing_info_score": 0.05,
+                "note": {
+                    "transcript": "a",
+                    "ground_truth_note": "b",
+                    "generated_note": "c",
+                },
             }
         ]
         mock_json_load.return_value = mock_data
@@ -43,7 +47,8 @@ class TestApp(unittest.TestCase):
         # Assert
         self.assertIsInstance(df, pd.DataFrame)
         self.assertEqual(len(df), 1)
-        self.assertEqual(df.iloc[0]['overall_score'], 0.8)
+        self.assertEqual(df.iloc[0]["overall_score"], 0.8)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
