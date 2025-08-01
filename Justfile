@@ -8,7 +8,10 @@ install:
 setup-data:
     ./scripts/download_data.sh
 
-# Run the main evaluation script on a small sample (5 notes)
+api:
+    uv run python -m src.api
+
+# Run the main evaluation script on a small sample (2 notes)
 run:
     uv run python -m src.main
 
@@ -27,3 +30,11 @@ test:
 # Set up a virtual environment with uv
 env:
     uv venv .venv
+
+# run pre-commit
+pre-commit:
+    uv run pre-commit run --all-files
+
+# install pre-commit
+pre-commit-install:
+    uv run pre-commit install

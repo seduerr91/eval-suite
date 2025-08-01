@@ -27,7 +27,7 @@ Your framework should identify problems such as:
 At DeepScribe, we need to:
 
 1. **Move fast** - We need to be able to quickly measure and incorporate the latest models and PR changes, without waiting days/weeks.
-2. **Understand production quality** - It’s important for us to measure our note quality in the wild, so we can quickly detect any regressions or areas where notes may have lower quality. 
+2. **Understand production quality** - It’s important for us to measure our note quality in the wild, so we can quickly detect any regressions or areas where notes may have lower quality.
 
 ### Evaluation Approaches
 
@@ -43,4 +43,3 @@ There are no wrong answers here - we’d encourage you to be creative and think 
 You need to have working code - implement a minimal eval suite and provide a write-up explaining your approach and justify how your metric(s) could be used to for goals 1 and 2. For bonus points (not required), you can add a dashboard summarizing your findings across all the notes.
 
 Here are the different eval framework informations:
-

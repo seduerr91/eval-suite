@@ -38,7 +38,7 @@ class SOAPStructureMetric(GEval):
             """,
             evaluation_steps=[
                 "Identify presence of each SOAP section",
-                "Verify appropriate content in each section", 
+                "Verify appropriate content in each section",
                 "Check for proper medical terminology usage",
                 "Assess logical flow between sections",
                 "Validate diagnostic reasoning from S/O to A/P"
@@ -61,17 +61,17 @@ class MedicalTerminologyMetric(BaseMetric):
         self.umls_api_key = umls_api_key
         self.threshold = threshold
         self.umls_client = UMLSClient(api_key)
-        
+
     def measure(self, test_case: LLMTestCase) -> float:
         medical_terms = self.extract_medical_terms(test_case.actual_output)
         validated_terms = []
-        
+
         for term in medical_terms:
             if self.validate_against_umls(term):
                 validated_terms.append(term)
-                
+
         return len(validated_terms) / len(medical_terms) if medical_terms else 1.0
-    
+
     def validate_against_umls(self, term: str) -> bool:
         # Integrate with UMLS Terminology Services
         response = self.umls_client.search_concept(term)
@@ -107,11 +107,11 @@ class ClinicalSafetyMetric(GEval):
 class MedicationSafetyMetric(BaseMetric):
     def __init__(self, drug_interaction_db):
         self.drug_db = drug_interaction_db
-        
+
     def measure(self, test_case: LLMTestCase) -> float:
         medications = self.extract_medications(test_case.actual_output)
         safety_score = 0
-        
+
         for med in medications:
             # Check dosage appropriateness
             if self.validate_dosage(med):
@@ -119,7 +119,7 @@ class MedicationSafetyMetric(BaseMetric):
             # Check for drug interactions
             if not self.has_dangerous_interactions(med, medications):
                 safety_score += 1
-                
+
         return safety_score / (len(medications) * 2) if medications else 1.0
 ```
 
@@ -131,7 +131,7 @@ Clinical AI must be evaluated for demographic and clinical biases[12][13][14]:
 class ClinicalBiasMetric(BaseMetric):
     def __init__(self):
         self.demographic_patterns = self.load_bias_patterns()
-        
+
     def measure(self, test_case: LLMTestCase) -> float:
         bias_indicators = {
             'gender_bias': self.detect_gender_bias(test_case),
@@ -139,10 +139,10 @@ class ClinicalBiasMetric(BaseMetric):
             'age_bias': self.detect_age_bias(test_case),
             'socioeconomic_bias': self.detect_ses_bias(test_case)
         }
-        
+
         # Lower scores indicate higher bias
         return 1.0 - max(bias_indicators.values())
-    
+
     def detect_gender_bias(self, test_case: LLMTestCase) -> float:
         # Analyze for gender-biased language in clinical descriptions
         biased_terms = ["hysterical", "dramatic", "anxious mother"]
@@ -163,13 +163,13 @@ class ClinicalEvaluationSuite:
     def __init__(self, config: ClinicalConfig):
         self.metrics = self._initialize_clinical_metrics(config)
         self.async_evaluator = AsyncEvaluator()
-        
+
     def _initialize_clinical_metrics(self, config) -> List[BaseMetric]:
         return [
             # Core DeepEval Metrics
             HallucinationMetric(threshold=0.3),  # Stricter for clinical
             ContextualRecallMetric(threshold=0.8),
-            
+
             # Clinical-Specific Metrics
             SOAPStructureMetric(threshold=0.9),
             MedicalTerminologyMetric(config.umls_api_key),
@@ -178,22 +178,22 @@ class ClinicalEvaluationSuite:
             ClinicalBiasMetric(),
             DiagnosticAccuracyMetric(),
             RegulatoryComplianceMetric(),
-            
+
             # Advanced Clinical Metrics
             TemporalConsistencyMetric(),
             ClinicalGuidelineAdherenceMetric(config.guidelines_db),
             PatientSafetyProtocolMetric(),
             RiskStratificationMetric()
         ]
-    
+
     async def evaluate_batch(self, test_cases: List[LLMTestCase]) -> Dict[str, Any]:
         """Async batch evaluation for production efficiency"""
         results = await asyncio.gather(*[
             self.evaluate_single(test_case) for test_case in test_cases
         ])
-        
+
         return self._aggregate_results(results)
-    
+
     def generate_clinical_report(self, results: Dict) -> ClinicalEvaluationReport:
         """Generate comprehensive clinical evaluation report"""
         return ClinicalEvaluationReport(
@@ -222,36 +222,36 @@ class ClinicalDashboard:
             layout="wide",
             initial_sidebar_state="expanded"
         )
-        
+
     def render_clinical_overview(self, results_df):
         """Render clinical-specific overview metrics"""
         col1, col2, col3, col4 = st.columns(4)
-        
+
         with col1:
             safety_score = results_df['clinical_safety_score'].mean()
             st.metric(
-                "Patient Safety Score", 
+                "Patient Safety Score",
                 f"{safety_score:.3f}",
                 delta=f"{safety_score - 0.95:.3f}",  # Compare to clinical threshold
                 delta_color="inverse"
             )
-            
+
         with col2:
             soap_compliance = results_df['soap_compliance_score'].mean()
             st.metric("SOAP Compliance", f"{soap_compliance:.1%}")
-            
+
         with col3:
             terminology_accuracy = results_df['terminology_accuracy'].mean()
             st.metric("Medical Terminology", f"{terminology_accuracy:.1%}")
-            
+
         with col4:
             bias_score = 1 - results_df['bias_score'].mean()  # Lower is better
             st.metric("Bias Mitigation", f"{bias_score:.3f}")
-    
+
     def render_risk_stratification(self, results_df):
         """Clinical risk stratification visualization"""
         st.subheader("Clinical Risk Analysis")
-        
+
         # Risk level distribution
         risk_counts = results_df['risk_level'].value_counts()
         fig_risk = px.pie(
@@ -260,22 +260,22 @@ class ClinicalDashboard:
             title="Note Risk Level Distribution",
             color_discrete_map={
                 'Low': 'green',
-                'Moderate': 'yellow', 
+                'Moderate': 'yellow',
                 'High': 'orange',
                 'Critical': 'red'
             }
         )
         st.plotly_chart(fig_risk)
-    
+
     def render_clinical_errors(self, results_df):
         """Display clinical error patterns"""
         st.subheader("Clinical Error Analysis")
-        
+
         error_categories = [
-            'medication_errors', 'diagnostic_errors', 
+            'medication_errors', 'diagnostic_errors',
             'safety_violations', 'terminology_errors'
         ]
-        
+
         error_data = []
         for category in error_categories:
             if category in results_df.columns:
@@ -284,27 +284,27 @@ class ClinicalDashboard:
                     'Count': results_df[category].sum(),
                     'Rate': results_df[category].mean()
                 })
-        
+
         if error_
             error_df = pd.DataFrame(error_data)
             fig_errors = px.bar(
-                error_df, 
-                x='Category', 
+                error_df,
+                x='Category',
                 y='Count',
                 title="Clinical Error Distribution"
             )
             st.plotly_chart(fig_errors)
-    
+
     def render_soap_analysis(self, results_df):
         """SOAP structure compliance analysis"""
         st.subheader("SOAP Structure Analysis")
-        
-        soap_sections = ['subjective_score', 'objective_score', 
+
+        soap_sections = ['subjective_score', 'objective_score',
                         'assessment_score', 'plan_score']
-        
-        soap_means = [results_df[section].mean() for section in soap_sections 
+
+        soap_means = [results_df[section].mean() for section in soap_sections
                      if section in results_df.columns]
-        
+
         if soap_means:
             fig_soap = go.Figure(data=go.Scatterpolar(
                 r=soap_means,
@@ -312,7 +312,7 @@ class ClinicalDashboard:
                 fill='toself',
                 name='SOAP Compliance'
             ))
-            
+
             fig_soap.update_layout(
                 polar=dict(
                     radialaxis=dict(
@@ -336,17 +336,17 @@ class ProductionMonitor:
             'hallucination_rate': 0.05,
             'bias_score': 0.1
         }
-        
+
     def monitor_live_evaluation(self, evaluation_result):
         """Real-time monitoring with alerts"""
         alerts = []
-        
+
         if evaluation_result.safety_score < self.alert_thresholds['safety_score']:
             alerts.append(CriticalSafetyAlert(evaluation_result))
-            
+
         if evaluation_result.hallucination_rate > self.alert_thresholds['hallucination_rate']:
             alerts.append(HallucinationAlert(evaluation_result))
-            
+
         return alerts
 ```
 

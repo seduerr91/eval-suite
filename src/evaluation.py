@@ -1,11 +1,17 @@
-import os
-from deepeval import evaluate
-from deepeval.metrics import HallucinationMetric, ContextualRecallMetric, GEval
-from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from typing import List
-from .schemas.models import ClinicalNote, EvaluationResult
-from .schemas.metrics import SOAPStructureMetric, ClinicalSafetyMetric, MedicalTerminologyMetric
-import json
+
+from deepeval import evaluate
+from deepeval.metrics import ContextualRecallMetric, HallucinationMetric
+from deepeval.test_case import LLMTestCase
+
+from src.schemas.metrics import (
+    ClinicalAccuracyMetric,
+    ClinicalSafetyMetric,
+    MedicalTerminologyMetric,
+    SOAPStructureMetric,
+)
+from src.schemas.models import ClinicalNote, EvaluationResult
+
 
 def run_evaluation(notes: List[ClinicalNote]) -> List[EvaluationResult]:
     """Runs the DeepEval evaluation on a list of clinical notes."""
@@ -17,28 +23,18 @@ def run_evaluation(notes: List[ClinicalNote]) -> List[EvaluationResult]:
             actual_output=note.generated_note,
             expected_output=note.ground_truth_note,
             context=[note.ground_truth_note],
-            retrieval_context=[note.transcript]
+            retrieval_context=[note.transcript],
         )
         for note in notes
     ]
-
     # Define the metrics to run
     metrics_to_run = [
         HallucinationMetric(threshold=0.3),
         ContextualRecallMetric(threshold=0.8),
-        GEval(
-            name="Clinical Accuracy",
-            criteria="Evaluate the clinical accuracy of the generated note. It should be medically sound and not contain misleading information.",
-            evaluation_steps=[
-                "Check for any medically incorrect statements.",
-                "Verify that medical terminology is appropriate.",
-                "Assess if the assessment and plan are clinically reasonable."
-            ],
-            evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT, LLMTestCaseParams.CONTEXT]
-        ),
+        ClinicalAccuracyMetric(threshold=0.8),
         SOAPStructureMetric(threshold=0.9),
         ClinicalSafetyMetric(threshold=0.7),
-        MedicalTerminologyMetric(threshold=0.8)
+        MedicalTerminologyMetric(threshold=0.8),
     ]
 
     # Run the evaluation in parallel
@@ -63,10 +59,20 @@ def run_evaluation(notes: List[ClinicalNote]) -> List[EvaluationResult]:
         safety_score = scores_dict.get("Clinical Safety Assessment [GEval]", 0.0)
         terminology_score = scores_dict.get("Medical Terminology Accuracy [GEval]", 0.0)
 
-        overall_score = sum([
-            hallucination_score, recall_score, accuracy_score,
-            soap_score, safety_score, terminology_score
-        ]) / 6
+        # TODO: This could require more sophistication
+        overall_score = (
+            sum(
+                [
+                    hallucination_score,
+                    recall_score,
+                    accuracy_score,
+                    soap_score,
+                    safety_score,
+                    terminology_score,
+                ]
+            )
+            / 6
+        )
 
         results.append(
             EvaluationResult(
@@ -77,7 +83,7 @@ def run_evaluation(notes: List[ClinicalNote]) -> List[EvaluationResult]:
                 soap_structure_score=soap_score,
                 clinical_safety_score=safety_score,
                 medical_terminology_score=terminology_score,
-                overall_score=overall_score
+                overall_score=overall_score,
             )
         )
 

@@ -1,6 +1,14 @@
 # Clinical Note Evaluation Suite
 
-This project provides a comprehensive suite for evaluating AI-generated clinical SOAP notes. It leverages `deepeval` to assess the quality of generated notes against a ground-truth dataset, providing a robust framework for ensuring clinical accuracy and safety.
+This project provides a comprehensive suite for evaluating AI-generated clinical SOAP notes, which are structured medical documents used by healthcare providers to record patient information in a clear and organized manner.
+It leverages `deepeval` to assess the quality of generated notes against a ground-truth dataset, providing a robust framework for ensuring clinical accuracy and safety.
+
+## SOAP Note Structure
+
+- **Subjective**: The patient's symptoms, complaints, and concerns.
+- **Objective**: The physical examination findings and medical history.
+- **Assessment**: The diagnosis and treatment plan.
+- **Plan**: The treatment plan.
 
 ## Key Features
 
@@ -14,7 +22,7 @@ This project provides a comprehensive suite for evaluating AI-generated clinical
 The pipeline follows these steps:
 1.  **Data Loading**: Loads patient conversations and ground-truth SOAP notes.
 2.  **Note Generation**: Generates a clinical note from each conversation transcript using an LLM.
-3.  **Evaluation**: Compares the generated note to the ground-truth note using `deepeval`.
+3.  **Evaluation**: Compares the generated note to the ground-truth note using `deepeval` (pypi).
 4.  **Visualization**: Displays the results in an interactive Streamlit dashboard.
 
 ## Dashboard Overview
@@ -33,6 +41,7 @@ The interactive dashboard provides a comprehensive view of the evaluation result
 - **Docker** for containerization
 - **Terraform** for infrastructure as code (AWS ECS)
 - **`pre-commit`** for code quality
+- ...
 
 ## Getting Started
 
@@ -90,7 +99,7 @@ brew install hashicorp/tap/terraform
 
 ## Evaluation Frameworks Comparison
 
-For a detailed comparison of various LLM evaluation frameworks and tools, please see the [Evaluation Suites Comparison](./docs/eval_suites_comparison.md) document. This was created to provide context and aid in the selection of the most appropriate tools for your needs.
+For a detailed comparison of various LLM evaluation frameworks and tools, please see the [Evaluation Suites Comparison](./docs/eval_suites_comparison.md) document. This was created to provide context and aid in the selection of the most appropriate tools.
 
 ## Next Steps
 
@@ -100,4 +109,4 @@ For a detailed comparison of various LLM evaluation frameworks and tools, please
 
 ## Disclaimer
 
-This evaluation pipeline was directed by Seb and heavily utilized AI to generate code and documentation.
+This evaluation pipeline was directed by Seb and utilized AI to generate code and documentation.

@@ -606,7 +606,7 @@ Red team evaluation encompasses systematic testing for various security vulnerab
 
 SQL injection assessment evaluates whether LLM systems can be manipulated to generate or execute malicious database queries[51][54].
 
-**Attack Vectors**: 
+**Attack Vectors**:
 - Direct prompt injection attempting to manipulate SQL generation
 - Indirect attacks through compromised retrieval contexts
 - Multi-step query chains bypassing safety restrictions[54]
@@ -984,4 +984,3 @@ Sources
 [108] LLM Red Teaming: The Complete Step-By-Step Guide To LLM Safety https://www.confident-ai.com/blog/red-teaming-llms-a-step-by-step-guide
 [109] Generating synthetic data with LLMs - Part 1 - Confident AI https://www.confident-ai.com/blog/how-to-generate-synthetic-data-using-llms-part-1
 [110] MMLU-Pro is a math benchmark. : r/LocalLLaMA - Reddit https://www.reddit.com/r/LocalLLaMA/comments/1du52gf/mmlupro_is_a_math_benchmark/
-
