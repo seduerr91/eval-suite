@@ -105,6 +105,7 @@ For a detailed comparison of various LLM evaluation frameworks and tools, please
 
 - Ensure transcripts fit into the context window or implement a chunking strategy.
 - Deploy the service and integrate it with real-time processing of patient-provider conversations.
+- Run a daily pipeline to evaluate the model's performance (Dagster hosted in ECS).
 - Account for concepts such as model drift, data drift, and model selection/updates.
 
 ## Disclaimer

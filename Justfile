@@ -52,3 +52,4 @@ clean:
     find . -name ".pytest_cache" -exec rm -rf {} +;
     find . -name "*.egg-info" -exec rm -rf {} +;
     find . -name "*.egg" -exec rm -rf {} +;
+    find . -name ".ruff_cache" -exec rm -rf {} +
