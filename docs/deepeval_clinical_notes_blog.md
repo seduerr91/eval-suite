@@ -102,18 +102,18 @@ results = []
 for i, test_result in enumerate(evaluation_output.test_results):
     note = notes[i]
     scores_dict = {m.name: m.score for m in test_result.metrics_data}
-    
+
     # Extract individual scores
     hallucination_score = scores_dict.get("Hallucination", 0.0)
     recall_score = scores_dict.get("Contextual Recall", 0.0)
     # ... other scores
-    
+
     # Calculate overall score
     overall_score = sum([
         hallucination_score, recall_score, accuracy_score,
         soap_score, safety_score, terminology_score
     ]) / 6
-    
+
     results.append(
         EvaluationResult(
             note=note,
@@ -136,7 +136,7 @@ avg_scores = {
 }
 
 # Display metrics with tooltips
-cols1[0].metric("Overall Score", f"{avg_scores['Overall Score']:.2f}", 
+cols1[0].metric("Overall Score", f"{avg_scores['Overall Score']:.2f}",
                 help="A weighted average of all other scores...")
 # ... other metrics
 ```

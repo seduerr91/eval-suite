@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
+
 class ClinicalNote(BaseModel):
     transcript: str = Field(
         ..., description="The source transcript of the patient encounter."

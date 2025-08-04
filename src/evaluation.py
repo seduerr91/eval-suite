@@ -1,7 +1,7 @@
 from typing import List, Dict, Union
 
 from deepeval import evaluate
-from deepeval.metrics import ContextualRecallMetric, HallucinationMetric
+from deepeval.metrics import HallucinationMetric
 from deepeval.test_case import LLMTestCase
 
 from src.core.config import settings
@@ -37,23 +37,23 @@ def run_evaluation(notes: List[ClinicalNote]) -> List[EvaluationResult]:
         ClinicalSafetyMetric(threshold=0.7),
         MedicalTerminologyMetric(threshold=0.7),
     ]
-    
+
     # Define hyperparameters to track with this evaluation run
     hyperparameters: Dict[str, Union[str, int, float]] = {
         "prompt_version": settings.PROMPT_VERSION,
         "generation_model": settings.GENERATION_LLM,
         "evaluation_model": settings.EVALUATION_LLM,
     }
-    
+
     # Create a descriptive identifier for the run
     identifier = f"prompt-{settings.PROMPT_VERSION}_gen-{settings.GENERATION_LLM.replace('.', '-')}"
 
     # Run the evaluation in parallel
     evaluation_output = evaluate(
-        test_cases=test_cases, 
+        test_cases=test_cases,
         metrics=metrics_to_run,
         hyperparameters=hyperparameters,
-        identifier=identifier
+        identifier=identifier,
     )
     if not evaluation_output.test_results:
         raise ValueError("Evaluation failed to return results.")
@@ -87,7 +87,7 @@ def run_evaluation(notes: List[ClinicalNote]) -> List[EvaluationResult]:
                     terminology_score,
                 ]
             )
-            / 6
+            / 5
         )
 
         results.append(

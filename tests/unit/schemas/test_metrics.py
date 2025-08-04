@@ -26,7 +26,7 @@ class TestMetrics(unittest.TestCase):
         self.assertIn(
             "Evaluate if the clinical note follows proper SOAP format", metric.criteria
         )
-        self.assertEqual(metric.threshold, 0.8)
+        self.assertEqual(metric.threshold, 0.7)
 
     @patch("openai.OpenAI")
     def test_clinical_safety_metric_init(self, mock_openai):

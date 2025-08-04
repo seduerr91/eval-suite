@@ -151,11 +151,11 @@ if df is not None:
                 f"{note_data['hallucination_score']:.2f}",
                 help=metric_tooltips["Hallucination Score"],
             )
-            col6.metric(
-                "Missing Info",
-                f"{note_data['missing_info_score']:.2f}",
-                help=metric_tooltips["Missing Info Score"],
-            )
+            # col6.metric(
+            #     "Missing Info",
+            #     f"{note_data['missing_info_score']:.2f}",
+            #     help=metric_tooltips["Missing Info Score"],
+            # )
 
             st.subheader("Note Details")
             note_details = note_data["note"]

@@ -2,25 +2,25 @@ import unittest
 from unittest.mock import patch, mock_open
 import pandas as pd
 
-from src import app
+from src import dashboard
 
 
 class TestApp(unittest.TestCase):
 
-    @patch("src.app.open", new_callable=mock_open)
+    @patch("src.dashboard.open", new_callable=mock_open)
     def test_load_results_file_not_found(self, mocked_file):
         # Arrange
         mocked_file.side_effect = FileNotFoundError
 
         # Act
         # We test the wrapped function to bypass the @st.cache_data decorator
-        result = app.load_results.__wrapped__()
+        result = dashboard.load_results.__wrapped__()
 
         # Assert
         self.assertIsNone(result)
 
-    @patch("src.app.open")
-    @patch("src.app.json.load")
+    @patch("src.dashboard.open")
+    @patch("src.dashboard.json.load")
     def test_load_results_success(self, mock_json_load, mock_open):
         # Arrange
         mock_data = [
@@ -42,7 +42,7 @@ class TestApp(unittest.TestCase):
         mock_json_load.return_value = mock_data
 
         # Act
-        df = app.load_results.__wrapped__()
+        df = dashboard.load_results.__wrapped__()
 
         # Assert
         self.assertIsInstance(df, pd.DataFrame)

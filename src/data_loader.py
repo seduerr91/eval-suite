@@ -14,18 +14,18 @@ client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
 def generate_note(transcript: str, prompt_version: Optional[str] = None) -> str:
     """Generates a structured clinical SOAP note using the configured LLM.
-    
+
     Args:
         transcript: The transcript of the conversation between a healthcare provider and a patient.
         prompt_version: The version of the prompt to use. If None, the default version is used.
-        
+
     Returns:
         The generated clinical note.
     """
     try:
         # Get the prompt messages for the specified version
         messages = get_prompt_messages(version=prompt_version, transcript=transcript)
-        
+
         # Create the completion
         response = client.chat.completions.create(
             model=settings.GENERATION_LLM,
@@ -58,7 +58,9 @@ def load_data(limit: int = None) -> List[ClinicalNote]:
         notes = []
         for _, row in df.iterrows():
             # Use the prompt version from settings
-            generated = generate_note(row["patient_convo"], prompt_version=settings.PROMPT_VERSION)
+            generated = generate_note(
+                row["patient_convo"], prompt_version=settings.PROMPT_VERSION
+            )
             notes.append(
                 ClinicalNote(
                     transcript=row["patient_convo"],

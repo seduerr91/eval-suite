@@ -30,10 +30,6 @@ class TestEvaluation(unittest.TestCase):
         mock_hallucination.name = "Hallucination"
         mock_hallucination.score = 0.1
 
-        mock_recall = MagicMock()
-        mock_recall.name = "Contextual Recall"
-        mock_recall.score = 0.9
-
         mock_accuracy = MagicMock()
         mock_accuracy.name = "Clinical Accuracy [GEval]"
         mock_accuracy.score = 0.8
@@ -52,7 +48,6 @@ class TestEvaluation(unittest.TestCase):
 
         mock_metric_data = [
             mock_hallucination,
-            mock_recall,
             mock_accuracy,
             mock_soap,
             mock_safety,
@@ -70,7 +65,7 @@ class TestEvaluation(unittest.TestCase):
         self.assertIsInstance(results[0], EvaluationResult)
         self.assertEqual(results[0].hallucination_score, 0.1)
         self.assertAlmostEqual(
-            results[0].overall_score, (0.1 + 0.9 + 0.8 + 1.0 + 0.7 + 0.85) / 6
+            results[0].overall_score, (0.1 + 0.8 + 1.0 + 0.7 + 0.85) / 5
         )
 
     @patch("openai.OpenAI")
