@@ -1,11 +1,11 @@
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
-requires-python = ">=3.13"
 
 [project]
 name = "eval-suite"
 version = "0.0.1"
+requires-python = ">=3.13"
 
 [tool.pytest.ini_options]
 pythonpath = [

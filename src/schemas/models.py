@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-
+from typing import Optional
 
 class ClinicalNote(BaseModel):
     transcript: str = Field(
@@ -14,7 +14,7 @@ class ClinicalNote(BaseModel):
 class EvaluationResult(BaseModel):
     note: ClinicalNote
     hallucination_score: float
-    missing_info_score: float
+    missing_info_score: Optional[float] = None
     clinical_accuracy_score: float
     soap_structure_score: float
     clinical_safety_score: float

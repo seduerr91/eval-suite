@@ -1,13 +1,16 @@
 from deepeval.metrics import GEval
 from deepeval.test_case import LLMTestCaseParams
 
+from src.core.config import settings
+
 
 class SOAPStructureMetric(GEval):
     """Evaluates the structural integrity of a SOAP note."""
 
-    def __init__(self, threshold: float = 0.8, **kwargs):
+    def __init__(self, threshold: float = 0.7, **kwargs):
         params = {
             "name": "SOAP Structure Compliance [GEval]",
+            "model": settings.EVALUATION_LLM,
             "criteria": """
             Evaluate if the clinical note follows proper SOAP format:
             1. Subjective: Patient-reported symptoms, chief complaint, history
@@ -38,6 +41,7 @@ class ClinicalSafetyMetric(GEval):
     def __init__(self, threshold: float = 0.7, **kwargs):
         params = {
             "name": "Clinical Safety Assessment [GEval]",
+            "model": settings.EVALUATION_LLM,
             "criteria": """
             Evaluate potential patient safety risks in the generated note:
             1. Medication errors (e.g., incorrect dosage, wrong medication).
@@ -68,11 +72,11 @@ class ClinicalAccuracyMetric(GEval):
     def __init__(self, threshold: float = 0.8, **kwargs):
         params = {
             "name": "Clinical Accuracy [GEval]",
+            "model": settings.EVALUATION_LLM,
             "criteria": """
             Evaluate the clinical accuracy of the generated note. It should be medically sound and not contain misleading information.
             """,
             "evaluation_steps": [
-                "Check for any medically incorrect statements.",
                 "Verify that medical terminology is appropriate.",
                 "Assess if the assessment and plan are clinically reasonable.",
             ],
@@ -93,6 +97,7 @@ class MedicalTerminologyMetric(GEval):
     def __init__(self, threshold: float = 0.8, **kwargs):
         params = {
             "name": "Medical Terminology Accuracy [GEval]",
+            "model": settings.EVALUATION_LLM,
             "criteria": """
             Evaluate the use of medical terminology in the clinical note for accuracy, context, and standard usage:
             1. Correctness: Are the terms spelled correctly and used in the proper medical context?

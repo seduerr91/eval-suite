@@ -21,7 +21,7 @@ run-full:
 
 # Run the streamlit dashboard
 dashboard:
-    uv run streamlit run src/app.py
+    uv run streamlit run src/dashboard.py
 
 # Run tests
 test:
@@ -38,3 +38,17 @@ pre-commit:
 # install pre-commit
 pre-commit-install:
     uv run pre-commit install
+
+# activate virtual environment
+activate:
+    source .venv/bin/activate
+
+# clean Python cache files
+clean:
+    find . -type d -name "__pycache__" -exec rm -rf {} +;
+    find . -name "*.pyc" -delete
+    find . -name "*.pyo" -delete
+    find . -name "*.pyd" -delete
+    find . -name ".pytest_cache" -exec rm -rf {} +;
+    find . -name "*.egg-info" -exec rm -rf {} +;
+    find . -name "*.egg" -exec rm -rf {} +;

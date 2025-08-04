@@ -1,43 +1,36 @@
 import logging
 import os
-from typing import List
+from typing import List, Optional
 
 import openai
 import pandas as pd
 
 from src.core.config import settings
+from src.prompts.versions import get_prompt_messages
 from src.schemas.models import ClinicalNote
 
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
-def generate_note(transcript: str) -> str:
-    """Generates a structured clinical SOAP note using OpenAI's GPT-4-turbo."""
+def generate_note(transcript: str, prompt_version: Optional[str] = None) -> str:
+    """Generates a structured clinical SOAP note using the configured LLM.
+    
+    Args:
+        transcript: The transcript of the conversation between a healthcare provider and a patient.
+        prompt_version: The version of the prompt to use. If None, the default version is used.
+        
+    Returns:
+        The generated clinical note.
+    """
     try:
+        # Get the prompt messages for the specified version
+        messages = get_prompt_messages(version=prompt_version, transcript=transcript)
+        
+        # Create the completion
         response = client.chat.completions.create(
-            model="gpt-4-turbo",
-            temperature=0.3,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a clinical documentation assistant trained to convert patient-provider conversations "
-                        "into structured, accurate, and complete clinical notes. Use SOAP (Subjective, Objective, "
-                        "Assessment, Plan) format. Only include medically relevant and clinically justifiable information. "
-                        "Avoid speculation or unsupported claims. Maintain a concise professional tone. "
-                        "Include appropriate clinical terminology where applicable."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        "Here is a transcript of a conversation between a healthcare provider and a patient. "
-                        "Please generate a structured clinical note in proper SOAP format based only on what is mentioned. "
-                        "Ensure accurate summarization and preserve critical clinical findings. Transcript:\n\n"
-                        f"{transcript}"
-                    ),
-                },
-            ],
+            model=settings.GENERATION_LLM,
+            temperature=0,
+            messages=messages,
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
@@ -64,7 +57,8 @@ def load_data(limit: int = None) -> List[ClinicalNote]:
 
         notes = []
         for _, row in df.iterrows():
-            generated = generate_note(row["patient_convo"])
+            # Use the prompt version from settings
+            generated = generate_note(row["patient_convo"], prompt_version=settings.PROMPT_VERSION)
             notes.append(
                 ClinicalNote(
                     transcript=row["patient_convo"],
